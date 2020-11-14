@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
-	"go-rest-playground/internal/app/hello"
+	"github.com/rafaelzig/go-rest/internal/app/hello"
 	"log"
 	"net/http"
 	"os"

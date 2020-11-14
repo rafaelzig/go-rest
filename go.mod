@@ -1,3 +1,3 @@
-module go-rest-playground
+module github.com/rafaelzig/go-rest
 
 go 1.15
