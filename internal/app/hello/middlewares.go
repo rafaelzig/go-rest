@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func (s *serverFacade) checkAuthorization(h http.HandlerFunc) http.HandlerFunc {
+func (s *handler) checkAuthorization(h http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if isAuthorized(r) {
 			h(w, r)
@@ -45,7 +45,7 @@ func decodeAuthorizationToken(encoded string) []string {
 	return split
 }
 
-func (s *serverFacade) logAccess(h http.HandlerFunc) http.HandlerFunc {
+func (s *handler) logAccess(h http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		log.Printf("%s request to %s\n", r.RequestURI, r.Method)
 		h(w, r)

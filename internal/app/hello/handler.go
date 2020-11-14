@@ -8,31 +8,25 @@ import (
 	"syscall"
 )
 
-type serverFacade struct {
-	*http.Server
+type handler struct {
 	router  *http.ServeMux
 	errChan chan<- os.Signal
 }
 
-func NewServerFacade(serverPort string, errChan chan<- os.Signal) *serverFacade {
-	router := http.NewServeMux()
-	s := &serverFacade{
-		router: router,
-		Server: &http.Server{
-			Addr:    ":" + serverPort,
-			Handler: router,
-		},
+func NewHandler(errChan chan<- os.Signal) *handler {
+	s := &handler{
+		router:  http.NewServeMux(),
 		errChan: errChan,
 	}
 	s.initRoutes()
 	return s
 }
 
-func (s *serverFacade) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (s *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	s.router.ServeHTTP(w, r)
 }
 
-func (s *serverFacade) respond(w http.ResponseWriter, r *http.Request, data interface{}, status int) {
+func (s *handler) respond(w http.ResponseWriter, r *http.Request, data interface{}, status int) {
 	header := w.Header()
 	header.Set("Content-Type", "application/json")
 	w.WriteHeader(status)
@@ -45,7 +39,7 @@ func (s *serverFacade) respond(w http.ResponseWriter, r *http.Request, data inte
 	}
 }
 
-func (s *serverFacade) handleHealth() func(http.ResponseWriter, *http.Request) {
+func (s *handler) handleHealth() func(http.ResponseWriter, *http.Request) {
 	response := struct {
 		Status string `json:"status"`
 	}{
@@ -56,7 +50,7 @@ func (s *serverFacade) handleHealth() func(http.ResponseWriter, *http.Request) {
 	}
 }
 
-func (s *serverFacade) handleIndex() func(http.ResponseWriter, *http.Request) {
+func (s *handler) handleIndex() func(http.ResponseWriter, *http.Request) {
 	response := struct {
 		Status string `json:"message"`
 	}{
@@ -67,7 +61,7 @@ func (s *serverFacade) handleIndex() func(http.ResponseWriter, *http.Request) {
 	}
 }
 
-func (s *serverFacade) handleShutdown() func(http.ResponseWriter, *http.Request) {
+func (s *handler) handleShutdown() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		s.errChan <- syscall.SIGTERM
 	}
