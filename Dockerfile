@@ -5,9 +5,10 @@ WORKDIR /usr/src
 COPY go.* ./
 RUN go mod download
 
-# Statically compile the binary (resulting binary will not be linked to any C libraries)
 COPY internal/app/hello internal/app/hello
 COPY cmd/hello cmd/hello
+
+# Statically compile the binary (resulting binary will not be linked to any C libraries)
 ENV CGO_ENABLED=0
 RUN go build -o /usr/bin cmd/hello/hello.go
 
