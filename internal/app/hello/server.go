@@ -2,19 +2,20 @@ package hello
 
 import (
 	"encoding/json"
+	"github.com/gorilla/mux"
 	"log"
 	"net/http"
 	"os"
 )
 
 type Server struct {
-	router  *http.ServeMux
+	router  *mux.Router
 	errChan chan<- os.Signal
 }
 
 func NewServer(errChan chan<- os.Signal) *Server {
 	s := &Server{
-		router:  http.NewServeMux(),
+		router:  mux.NewRouter(),
 		errChan: errChan,
 	}
 	s.initRoutes()
