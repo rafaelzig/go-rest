@@ -30,7 +30,7 @@ func run() error {
 	signal.Notify(errChan, syscall.SIGTERM, syscall.SIGKILL)
 	server := &http.Server{
 		Addr:    ":" + strconv.FormatUint(uint64(port), 10),
-		Handler: hello.NewHandler(errChan),
+		Handler: hello.NewServer(errChan),
 	}
 	go startServer(server)()
 	log.Printf("Server is listening on http://localhost%s\n", server.Addr)
