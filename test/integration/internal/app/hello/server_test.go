@@ -9,7 +9,7 @@ import (
 	"testing"
 )
 
-func TestServerIntegration(t *testing.T) {
+func TestServer(t *testing.T) {
 	is := is.New(t)
 	srv := httptest.NewServer(hello.NewServer(nil))
 	defer srv.Close()
