@@ -3,7 +3,7 @@ package hello
 import "net/http"
 
 func (s *Server) initRoutes() {
-	s.router.HandleFunc("/", s.logAccess(s.HandleIndex())).Methods(http.MethodGet)
-	s.router.HandleFunc("/health", s.logAccess(s.HandleHealth())).Methods(http.MethodGet)
-	s.router.HandleFunc("/shutdown", s.logAccess(s.checkAuthorization(s.HandleShutdown()))).Methods(http.MethodDelete)
+	s.router.HandleFunc("/", s.Log(s.HandleIndex())).Methods(http.MethodGet)
+	s.router.HandleFunc("/health", s.Log(s.HandleHealth())).Methods(http.MethodGet)
+	s.router.HandleFunc("/shutdown", s.Log(s.Authorize(s.BasicAuth("admin", "password"), s.HandleShutdown()))).Methods(http.MethodDelete)
 }
