@@ -14,7 +14,7 @@ func TestHandleHealthResponse(t *testing.T) {
 	srv := hello.NewServer(nil)
 	r := httptest.NewRequest(http.MethodGet, "/health", nil)
 	w := httptest.NewRecorder()
-	srv.ServeHTTP(w, r)
+	srv.HandleHealth()(w, r)
 	is.Equal(w.Code, http.StatusOK)
 	is.Equal(w.Header().Get("Content-Type"), "application/json")
 	type response = struct {

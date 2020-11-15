@@ -13,9 +13,8 @@ func TestHandleShutdownResponse(t *testing.T) {
 	is := is.New(t)
 	srv := hello.NewServer(nil)
 	r := httptest.NewRequest(http.MethodDelete, "/shutdown", nil)
-	r.SetBasicAuth("admin", "password")
 	w := httptest.NewRecorder()
-	srv.ServeHTTP(w, r)
+	srv.HandleShutdown()(w, r)
 	is.Equal(w.Code, http.StatusAccepted)
 	is.Equal(w.Header().Get("Content-Type"), "application/json")
 	type response = struct {

@@ -4,7 +4,7 @@ import (
 	"net/http"
 )
 
-func (s *Server) handleHealth() func(http.ResponseWriter, *http.Request) {
+func (s *Server) HandleHealth() func(http.ResponseWriter, *http.Request) {
 	response := struct {
 		Status string `json:"status"`
 	}{
