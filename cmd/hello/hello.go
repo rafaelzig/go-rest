@@ -27,6 +27,7 @@ func main() {
 func run() error {
 	port := parseServerPort(os.Getenv(serverPortEnvKey))
 	errChan := make(chan os.Signal, 1)
+	defer close(errChan)
 	signal.Notify(errChan, syscall.SIGTERM, syscall.SIGKILL)
 	server := &http.Server{
 		Addr:    ":" + strconv.FormatUint(uint64(port), 10),
