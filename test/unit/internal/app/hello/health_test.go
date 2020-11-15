@@ -9,19 +9,19 @@ import (
 	"testing"
 )
 
-func TestHandleShutdownResponse(t *testing.T) {
+func TestHandleHealthResponse(t *testing.T) {
 	is := is.New(t)
 	srv := hello.NewServer(nil)
-	r := httptest.NewRequest(http.MethodDelete, "/shutdown", nil)
+	r := httptest.NewRequest(http.MethodGet, "/", nil)
 	w := httptest.NewRecorder()
-	srv.HandleShutdown()(w, r)
-	is.Equal(w.Code, http.StatusAccepted)
+	srv.HandleHealth()(w, r)
+	is.Equal(w.Code, http.StatusOK)
 	is.Equal(w.Header().Get("Content-Type"), "application/json")
 	type response = struct {
 		Status string `json:"status"`
 	}
 	expected := response{
-		Status: "shutdown initiated",
+		Status: "ready",
 	}
 	var actual response
 	err := json.NewDecoder(w.Body).Decode(&actual)
