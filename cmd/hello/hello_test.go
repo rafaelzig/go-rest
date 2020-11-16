@@ -11,6 +11,9 @@ import (
 )
 
 func TestHelloIntegration(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping integration test")
+	}
 	is := is.New(t)
 	h := &hello.Server{Router: mux.NewRouter()}
 	h.Routes()

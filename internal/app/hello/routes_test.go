@@ -9,6 +9,9 @@ import (
 )
 
 func TestRoutesUnauthorizedIntegration(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping integration test")
+	}
 	is := is.New(t)
 	srv := Server{Router: mux.NewRouter()}
 	srv.Routes()
@@ -27,6 +30,9 @@ func TestRoutesUnauthorizedIntegration(t *testing.T) {
 }
 
 func TestRoutesAllowedMethodsIntegration(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping integration test")
+	}
 	is := is.New(t)
 	srv := Server{Router: mux.NewRouter()}
 	srv.Routes()
@@ -46,6 +52,9 @@ func TestRoutesAllowedMethodsIntegration(t *testing.T) {
 }
 
 func TestRoutesDisallowedMethodsIntegration(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping integration test")
+	}
 	is := is.New(t)
 	srv := Server{Router: mux.NewRouter()}
 	srv.Routes()
