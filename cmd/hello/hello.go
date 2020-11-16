@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/rafaelzig/go-rest/internal/app/hello"
 	"log"
@@ -17,12 +16,16 @@ import (
 const serverPortEnvKey = "SERVER_PORT"
 const defaultServerPort = uint16(8080)
 
+var debugLogger = log.New(os.Stdout, "DEBUG: ", log.Ldate|log.Ltime|log.Lshortfile)
+var infoLogger = log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
+var warnLogger = log.New(os.Stdout, "WARN: ", log.Ldate|log.Ltime|log.Lshortfile)
+var errorLogger = log.New(os.Stderr, "ERROR: ", log.Ldate|log.Ltime|log.Lshortfile)
+
 func main() {
 	if err := run(); err != nil {
-		fmt.Fprintf(os.Stderr, "%s\n", err)
-		os.Exit(1)
+		errorLogger.Fatalf("%s\n", err)
 	}
-	log.Print("Server gracefully stopped")
+	infoLogger.Print("Server gracefully stopped")
 }
 
 func run() error {
@@ -31,9 +34,9 @@ func run() error {
 	signal.Notify(h.ShutdownChan, syscall.SIGTERM, syscall.SIGKILL)
 	srv := createServer(h)
 	go startServer(srv)()
-	log.Printf("Server is listening on http://localhost%s\n", srv.Addr)
+	infoLogger.Printf("Server listening on http://localhost%s\n", srv.Addr)
 	<-h.ShutdownChan
-	log.Println("Shutting down the server...")
+	infoLogger.Println("Shutting down the server...")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	return srv.Shutdown(ctx)
@@ -43,14 +46,13 @@ func createHandler() *hello.Server {
 	h := &hello.Server{
 		Router:       mux.NewRouter(),
 		ShutdownChan: make(chan os.Signal, 1),
-		Info:         info,
+		Debug:        debugLogger,
+		Info:         infoLogger,
+		Warn:         warnLogger,
+		Error:        errorLogger,
 	}
 	h.Routes()
 	return h
-}
-
-func info(v interface{}) {
-	log.Println(v)
 }
 
 func createServer(h *hello.Server) *http.Server {
@@ -77,7 +79,7 @@ func startServer(server *http.Server) func() {
 	return func() {
 		err := server.ListenAndServe()
 		if err != http.ErrServerClosed {
-			log.Fatalf("listen: %s\n", err)
+			errorLogger.Fatalf("listen: %s\n", err)
 		}
 	}
 }

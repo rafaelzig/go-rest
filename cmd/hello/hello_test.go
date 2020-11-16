@@ -12,9 +12,7 @@ import (
 
 func TestHelloIntegration(t *testing.T) {
 	is := is.New(t)
-	h := &hello.Server{
-		Router: mux.NewRouter(),
-	}
+	h := &hello.Server{Router: mux.NewRouter()}
 	h.Routes()
 	srv := httptest.NewServer(h)
 	defer srv.Close()
