@@ -8,22 +8,18 @@ import (
 	"os"
 )
 
-type Server struct {
-	router  *mux.Router
-	errChan chan<- os.Signal
-}
+type LoggerFunc func(v interface{})
 
-func NewServer(errChan chan<- os.Signal) *Server {
-	s := &Server{
-		router:  mux.NewRouter(),
-		errChan: errChan,
-	}
-	s.initRoutes()
-	return s
+type Server struct {
+	Router       *mux.Router
+	Debug        LoggerFunc
+	Info         LoggerFunc
+	Error        LoggerFunc
+	ShutdownChan chan os.Signal
 }
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	s.router.ServeHTTP(w, r)
+	s.Router.ServeHTTP(w, r)
 }
 
 func (s *Server) respond(w http.ResponseWriter, r *http.Request, data interface{}, status int) {

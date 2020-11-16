@@ -1,6 +1,7 @@
 package hello
 
 import (
+	"github.com/gorilla/mux"
 	"github.com/matryer/is"
 	"net/http"
 	"net/http/httptest"
@@ -9,7 +10,8 @@ import (
 
 func TestRoutesUnauthorizedIntegration(t *testing.T) {
 	is := is.New(t)
-	srv := NewServer(nil)
+	srv := Server{Router: mux.NewRouter()}
+	srv.Routes()
 	routes := map[string]string{
 		"/shutdown": http.MethodDelete,
 	}
@@ -26,8 +28,8 @@ func TestRoutesUnauthorizedIntegration(t *testing.T) {
 
 func TestRoutesAllowedMethodsIntegration(t *testing.T) {
 	is := is.New(t)
-	srv := NewServer(nil)
-
+	srv := Server{Router: mux.NewRouter()}
+	srv.Routes()
 	routes := map[string]string{
 		"/":         http.MethodGet,
 		"/health":   http.MethodGet,
@@ -45,7 +47,8 @@ func TestRoutesAllowedMethodsIntegration(t *testing.T) {
 
 func TestRoutesDisallowedMethodsIntegration(t *testing.T) {
 	is := is.New(t)
-	srv := NewServer(nil)
+	srv := Server{Router: mux.NewRouter()}
+	srv.Routes()
 	routes := map[string][8]string{
 		"/": {
 			http.MethodHead,

@@ -10,7 +10,7 @@ import (
 
 func TestHandleHealthResponse(t *testing.T) {
 	is := is.New(t)
-	srv := NewServer(nil)
+	srv := Server{}
 	r := httptest.NewRequest(http.MethodGet, "/", nil)
 	w := httptest.NewRecorder()
 	srv.handleHealth()(w, r)

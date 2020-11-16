@@ -10,7 +10,7 @@ import (
 
 func TestHandleShutdownResponse(t *testing.T) {
 	is := is.New(t)
-	srv := NewServer(nil)
+	srv := Server{}
 	r := httptest.NewRequest(http.MethodDelete, "/", nil)
 	w := httptest.NewRecorder()
 	srv.handleShutdown()(w, r)

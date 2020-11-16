@@ -16,7 +16,7 @@ func TestCheckAuthorization(t *testing.T) {
 	authFunc := func(r *http.Request) bool {
 		return false
 	}
-	srv := NewServer(nil)
+	srv := Server{}
 	r := httptest.NewRequest(http.MethodGet, "/", nil)
 	w := httptest.NewRecorder()
 	srv.authorize(authFunc, h)(w, r)

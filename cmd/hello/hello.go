@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/gorilla/mux"
 	"github.com/rafaelzig/go-rest/internal/app/hello"
 	"log"
 	"net/http"
@@ -25,21 +26,39 @@ func main() {
 }
 
 func run() error {
-	port := parseServerPort(os.Getenv(serverPortEnvKey))
-	errChan := make(chan os.Signal, 1)
-	defer close(errChan)
-	signal.Notify(errChan, syscall.SIGTERM, syscall.SIGKILL)
-	server := &http.Server{
-		Addr:    ":" + strconv.FormatUint(uint64(port), 10),
-		Handler: hello.NewServer(errChan),
-	}
-	go startServer(server)()
-	log.Printf("Server is listening on http://localhost%s\n", server.Addr)
-	<-errChan
+	h := createHandler()
+	defer close(h.ShutdownChan)
+	signal.Notify(h.ShutdownChan, syscall.SIGTERM, syscall.SIGKILL)
+	srv := createServer(h)
+	go startServer(srv)()
+	log.Printf("Server is listening on http://localhost%s\n", srv.Addr)
+	<-h.ShutdownChan
 	log.Println("Shutting down the server...")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-	return server.Shutdown(ctx)
+	return srv.Shutdown(ctx)
+}
+
+func createHandler() *hello.Server {
+	h := &hello.Server{
+		Router:       mux.NewRouter(),
+		ShutdownChan: make(chan os.Signal, 1),
+		Info:         info,
+	}
+	h.Routes()
+	return h
+}
+
+func info(v interface{}) {
+	log.Println(v)
+}
+
+func createServer(h *hello.Server) *http.Server {
+	server := &http.Server{
+		Addr:    ":" + strconv.FormatUint(uint64(parseServerPort(os.Getenv(serverPortEnvKey))), 10),
+		Handler: h,
+	}
+	return server
 }
 
 func parseServerPort(str string) uint16 {

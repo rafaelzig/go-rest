@@ -9,7 +9,7 @@ import (
 
 func TestBasicAuthPass(t *testing.T) {
 	is := is.New(t)
-	srv := NewServer(nil)
+	srv := Server{}
 	r := httptest.NewRequest(http.MethodGet, "/", nil)
 	user := "user"
 	pass := "pass"
@@ -19,7 +19,7 @@ func TestBasicAuthPass(t *testing.T) {
 
 func TestBasicAuthFail(t *testing.T) {
 	is := is.New(t)
-	srv := NewServer(nil)
+	srv := Server{}
 	r := httptest.NewRequest(http.MethodGet, "/", nil)
 	r.SetBasicAuth("user", "pass")
 	is.True(!srv.basicAuth("another", "password")(r))

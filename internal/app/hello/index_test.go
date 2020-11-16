@@ -10,7 +10,7 @@ import (
 
 func TestHandleIndexResponseCode(t *testing.T) {
 	is := is.New(t)
-	srv := NewServer(nil)
+	srv := Server{}
 	r := httptest.NewRequest(http.MethodGet, "/", nil)
 	w := httptest.NewRecorder()
 	srv.handleIndex()(w, r)

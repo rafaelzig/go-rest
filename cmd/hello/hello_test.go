@@ -1,16 +1,22 @@
-package hello
+package main
 
 import (
 	"encoding/json"
+	"github.com/gorilla/mux"
 	"github.com/matryer/is"
+	"github.com/rafaelzig/go-rest/internal/app/hello"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 )
 
-func TestServerIntegration(t *testing.T) {
+func TestHelloIntegration(t *testing.T) {
 	is := is.New(t)
-	srv := httptest.NewServer(NewServer(nil))
+	h := &hello.Server{
+		Router: mux.NewRouter(),
+	}
+	h.Routes()
+	srv := httptest.NewServer(h)
 	defer srv.Close()
 	resp, err := http.Get(srv.URL + "/health")
 	is.NoErr(err)
