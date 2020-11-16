@@ -13,7 +13,7 @@ func TestHandleIndexResponseCode(t *testing.T) {
 	srv := NewServer(nil)
 	r := httptest.NewRequest(http.MethodGet, "/", nil)
 	w := httptest.NewRecorder()
-	srv.HandleIndex()(w, r)
+	srv.handleIndex()(w, r)
 	is.Equal(w.Code, http.StatusOK)
 	is.Equal(w.Header().Get("Content-Type"), "application/json")
 	type response = struct {

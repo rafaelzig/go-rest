@@ -2,7 +2,7 @@ package hello
 
 import "net/http"
 
-func (s *Server) HandleIndex() func(http.ResponseWriter, *http.Request) {
+func (s *Server) handleIndex() func(http.ResponseWriter, *http.Request) {
 	response := struct {
 		Message string `json:"message"`
 	}{

@@ -13,7 +13,7 @@ func TestHandleShutdownResponse(t *testing.T) {
 	srv := NewServer(nil)
 	r := httptest.NewRequest(http.MethodDelete, "/", nil)
 	w := httptest.NewRecorder()
-	srv.HandleShutdown()(w, r)
+	srv.handleShutdown()(w, r)
 	is.Equal(w.Code, http.StatusAccepted)
 	is.Equal(w.Header().Get("Content-Type"), "application/json")
 	type response = struct {

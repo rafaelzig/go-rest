@@ -5,7 +5,7 @@ import (
 	"syscall"
 )
 
-func (s *Server) HandleShutdown() func(http.ResponseWriter, *http.Request) {
+func (s *Server) handleShutdown() func(http.ResponseWriter, *http.Request) {
 	response := struct {
 		Status string `json:"status"`
 	}{
