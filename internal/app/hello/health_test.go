@@ -3,7 +3,6 @@ package hello
 import (
 	"encoding/json"
 	"github.com/matryer/is"
-	"github.com/rafaelzig/go-rest/internal/app/hello"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -11,10 +10,10 @@ import (
 
 func TestHandleHealthResponse(t *testing.T) {
 	is := is.New(t)
-	srv := hello.NewServer(nil)
+	srv := NewServer(nil)
 	r := httptest.NewRequest(http.MethodGet, "/", nil)
 	w := httptest.NewRecorder()
-	srv.HandleHealth()(w, r)
+	srv.handleHealth()(w, r)
 	is.Equal(w.Code, http.StatusOK)
 	is.Equal(w.Header().Get("Content-Type"), "application/json")
 	type response = struct {

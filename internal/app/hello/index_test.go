@@ -3,7 +3,6 @@ package hello
 import (
 	"encoding/json"
 	"github.com/matryer/is"
-	"github.com/rafaelzig/go-rest/internal/app/hello"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -11,7 +10,7 @@ import (
 
 func TestHandleIndexResponseCode(t *testing.T) {
 	is := is.New(t)
-	srv := hello.NewServer(nil)
+	srv := NewServer(nil)
 	r := httptest.NewRequest(http.MethodGet, "/", nil)
 	w := httptest.NewRecorder()
 	srv.HandleIndex()(w, r)

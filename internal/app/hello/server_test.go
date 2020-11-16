@@ -3,15 +3,14 @@ package hello
 import (
 	"encoding/json"
 	"github.com/matryer/is"
-	"github.com/rafaelzig/go-rest/internal/app/hello"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 )
 
-func TestServer(t *testing.T) {
+func TestServerIntegration(t *testing.T) {
 	is := is.New(t)
-	srv := httptest.NewServer(hello.NewServer(nil))
+	srv := httptest.NewServer(NewServer(nil))
 	defer srv.Close()
 	resp, err := http.Get(srv.URL + "/health")
 	is.NoErr(err)

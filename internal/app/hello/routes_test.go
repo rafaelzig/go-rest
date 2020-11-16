@@ -2,15 +2,14 @@ package hello
 
 import (
 	"github.com/matryer/is"
-	"github.com/rafaelzig/go-rest/internal/app/hello"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 )
 
-func TestRoutesUnauthorized(t *testing.T) {
+func TestRoutesUnauthorizedIntegration(t *testing.T) {
 	is := is.New(t)
-	srv := hello.NewServer(nil)
+	srv := NewServer(nil)
 	routes := map[string]string{
 		"/shutdown": http.MethodDelete,
 	}
@@ -25,9 +24,9 @@ func TestRoutesUnauthorized(t *testing.T) {
 	}
 }
 
-func TestRoutesAllowedMethods(t *testing.T) {
+func TestRoutesAllowedMethodsIntegration(t *testing.T) {
 	is := is.New(t)
-	srv := hello.NewServer(nil)
+	srv := NewServer(nil)
 
 	routes := map[string]string{
 		"/":         http.MethodGet,
@@ -44,9 +43,9 @@ func TestRoutesAllowedMethods(t *testing.T) {
 	}
 }
 
-func TestRoutesDisallowedMethods(t *testing.T) {
+func TestRoutesDisallowedMethodsIntegration(t *testing.T) {
 	is := is.New(t)
-	srv := hello.NewServer(nil)
+	srv := NewServer(nil)
 	routes := map[string][8]string{
 		"/": {
 			http.MethodHead,
