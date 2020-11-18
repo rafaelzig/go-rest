@@ -19,13 +19,13 @@ func TestCheckAuthorization(t *testing.T) {
 	srv := Server{}
 	r := httptest.NewRequest(http.MethodGet, "/", nil)
 	w := httptest.NewRecorder()
-	srv.authorize(authFunc, h)(w, r)
+	srv.WithAuth(authFunc, h)(w, r)
 	is.Equal(w.Code, http.StatusUnauthorized)
 	is.Equal(isCalled, false)
 
 	authFunc = func(r *http.Request) bool {
 		return true
 	}
-	srv.authorize(authFunc, h)(w, r)
+	srv.WithAuth(authFunc, h)(w, r)
 	is.Equal(isCalled, true)
 }
