@@ -9,6 +9,7 @@ import (
 	"os"
 	"os/signal"
 	"strconv"
+	"syscall"
 	"time"
 )
 
@@ -21,7 +22,7 @@ func main() {
 	idleConnsClosed := make(chan struct{})
 	go func() {
 		sigint := make(chan os.Signal, 1)
-		signal.Notify(sigint, os.Interrupt)
+		signal.Notify(sigint, syscall.SIGTERM, syscall.SIGKILL)
 		<-sigint
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
@@ -32,7 +33,7 @@ func main() {
 		}
 		close(idleConnsClosed)
 	}()
-	h.Info.Printf("Starting HTTP server on localhost%s\n", srv.Addr)
+	h.Info.Printf("Starting HTTP server on http://localhost%s\n", srv.Addr)
 	if err := srv.ListenAndServe(); err != http.ErrServerClosed {
 		h.Error.Fatalf("HTTP server ListenAndServe: %v", err)
 	}
