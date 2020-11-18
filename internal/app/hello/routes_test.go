@@ -16,7 +16,7 @@ func TestRoutesUnauthorizedIntegration(t *testing.T) {
 	srv := Server{Router: mux.NewRouter()}
 	srv.Routes()
 	routes := map[string]string{
-		"/shutdown": http.MethodDelete,
+		"/admin": http.MethodGet,
 	}
 	for route, method := range routes {
 		r := httptest.NewRequest(method, route, nil)
@@ -37,9 +37,9 @@ func TestRoutesAllowedMethodsIntegration(t *testing.T) {
 	srv := Server{Router: mux.NewRouter()}
 	srv.Routes()
 	routes := map[string]string{
-		"/":         http.MethodGet,
-		"/health":   http.MethodGet,
-		"/shutdown": http.MethodDelete,
+		"/":       http.MethodGet,
+		"/health": http.MethodGet,
+		"/admin":  http.MethodGet,
 	}
 
 	for route, method := range routes {
@@ -79,7 +79,7 @@ func TestRoutesDisallowedMethodsIntegration(t *testing.T) {
 			http.MethodTrace,
 			http.MethodDelete,
 		},
-		"/shutdown": {
+		"/admin": {
 			http.MethodHead,
 			http.MethodPost,
 			http.MethodPut,
@@ -87,7 +87,7 @@ func TestRoutesDisallowedMethodsIntegration(t *testing.T) {
 			http.MethodConnect,
 			http.MethodOptions,
 			http.MethodTrace,
-			http.MethodGet,
+			http.MethodDelete,
 		},
 	}
 	for route, disallowedMethods := range routes {

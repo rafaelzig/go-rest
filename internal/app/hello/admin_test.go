@@ -11,16 +11,16 @@ import (
 func TestHandleShutdownResponse(t *testing.T) {
 	is := is.New(t)
 	srv := Server{}
-	r := httptest.NewRequest(http.MethodDelete, "/", nil)
+	r := httptest.NewRequest(http.MethodGet, "/", nil)
 	w := httptest.NewRecorder()
-	srv.handleShutdown()(w, r)
-	is.Equal(w.Code, http.StatusAccepted)
+	srv.handleAdmin()(w, r)
+	is.Equal(w.Code, http.StatusOK)
 	is.Equal(w.Header().Get("Content-Type"), "application/json")
 	type response = struct {
-		Status string `json:"status"`
+		Message string `json:"message"`
 	}
 	expected := response{
-		Status: "shutdown initiated",
+		Message: "Secret World",
 	}
 	var actual response
 	err := json.NewDecoder(w.Body).Decode(&actual)

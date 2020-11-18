@@ -6,16 +6,14 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
 )
 
 type Server struct {
-	Router       *mux.Router
-	Debug        *log.Logger
-	Info         *log.Logger
-	Warn         *log.Logger
-	Error        *log.Logger
-	ShutdownChan chan os.Signal
+	Router *mux.Router
+	Debug  *log.Logger
+	Info   *log.Logger
+	Warn   *log.Logger
+	Error  *log.Logger
 }
 type logType string
 
