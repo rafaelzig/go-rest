@@ -60,11 +60,15 @@ func (s *Server) respond(w http.ResponseWriter, r *http.Request, data interface{
 	if data == nil {
 		return
 	}
-	err := json.NewEncoder(w).Encode(data)
+	err := s.encode(w, data)
 	if err == nil {
 		return
 	}
 	s.error().Printf("Write failed: %s\n", err)
+}
+
+func (s *Server) encode(w http.ResponseWriter, v interface{}) error {
+	return json.NewEncoder(w).Encode(v)
 }
 
 func (s *Server) decode(r *http.Request, v interface{}) error {
