@@ -9,47 +9,45 @@ import (
 	"os"
 	"os/signal"
 	"strconv"
-	"syscall"
 	"time"
 )
 
 const serverPortEnvKey = "SERVER_PORT"
 const defaultServerPort = uint16(8080)
 
-var debugLogger = log.New(os.Stdout, "DEBUG: ", log.Ldate|log.Ltime|log.Lshortfile)
-var infoLogger = log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
-var warnLogger = log.New(os.Stdout, "WARN: ", log.Ldate|log.Ltime|log.Lshortfile)
-var errorLogger = log.New(os.Stderr, "ERROR: ", log.Ldate|log.Ltime|log.Lshortfile)
-
 func main() {
-	if err := run(); err != nil {
-		errorLogger.Fatalf("%s\n", err)
-	}
-	infoLogger.Print("Server gracefully stopped")
-}
-
-func run() error {
 	h := createHandler()
-	defer close(h.ShutdownChan)
-	signal.Notify(h.ShutdownChan, syscall.SIGTERM, syscall.SIGKILL)
 	srv := createServer(h)
-	go startServer(srv)()
-	infoLogger.Printf("Server listening on http://localhost%s\n", srv.Addr)
-	<-h.ShutdownChan
-	infoLogger.Println("Shutting down the server...")
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-	return srv.Shutdown(ctx)
+	idleConnsClosed := make(chan struct{})
+	go func() {
+		sigint := make(chan os.Signal, 1)
+		signal.Notify(sigint, os.Interrupt)
+		<-sigint
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+		h.Info.Println("Initiating HTTP server Shutdown")
+		if err := srv.Shutdown(ctx); err != nil {
+			// Error from closing listeners, or context timeout:
+			h.Info.Printf("HTTP server Shutdown: %v", err)
+		}
+		close(idleConnsClosed)
+	}()
+	h.Info.Printf("Starting HTTP server on localhost%s\n", srv.Addr)
+	if err := srv.ListenAndServe(); err != http.ErrServerClosed {
+		h.Error.Fatalf("HTTP server ListenAndServe: %v", err)
+	}
+	<-idleConnsClosed
+	h.Info.Print("HTTP server gracefully Shutdown")
 }
 
 func createHandler() *hello.Server {
 	h := &hello.Server{
 		Router:       mux.NewRouter(),
 		ShutdownChan: make(chan os.Signal, 1),
-		Debug:        debugLogger,
-		Info:         infoLogger,
-		Warn:         warnLogger,
-		Error:        errorLogger,
+		Debug:        log.New(os.Stdout, "DEBUG: ", log.Ldate|log.Ltime|log.Lshortfile),
+		Info:         log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile),
+		Warn:         log.New(os.Stdout, "WARN: ", log.Ldate|log.Ltime|log.Lshortfile),
+		Error:        log.New(os.Stderr, "ERROR: ", log.Ldate|log.Ltime|log.Lshortfile),
 	}
 	h.Routes()
 	return h
@@ -73,13 +71,4 @@ func parseServerPort(str string) uint16 {
 	}
 
 	return uint16(serverPort)
-}
-
-func startServer(server *http.Server) func() {
-	return func() {
-		err := server.ListenAndServe()
-		if err != http.ErrServerClosed {
-			errorLogger.Fatalf("listen: %s\n", err)
-		}
-	}
 }
