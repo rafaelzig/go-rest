@@ -9,7 +9,7 @@ func (s *Server) WithAuth(authFunc func(r *http.Request) bool, h http.HandlerFun
 		if authFunc(r) {
 			h(w, r)
 		} else {
-			s.respond(w, r, struct{}{}, http.StatusUnauthorized)
+			s.respond(w, r, nil, http.StatusUnauthorized)
 		}
 	}
 }
