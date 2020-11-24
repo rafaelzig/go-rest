@@ -8,14 +8,14 @@ import (
 	"testing"
 )
 
-func TestHandleShutdownResponse(t *testing.T) {
+func TestHandleAdminResponse(t *testing.T) {
 	is := is.New(t)
 	srv := Server{}
 	r := httptest.NewRequest(http.MethodGet, "/", nil)
 	w := httptest.NewRecorder()
 	srv.handleAdmin()(w, r)
 	is.Equal(w.Code, http.StatusOK)
-	is.Equal(w.Header().Get("Content-Type"), "application/json")
+	is.Equal(w.Header().Get("Content-Type"), supportedContentType)
 	type response = struct {
 		Message string `json:"message"`
 	}

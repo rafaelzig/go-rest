@@ -15,7 +15,7 @@ func TestHandleHealthResponse(t *testing.T) {
 	w := httptest.NewRecorder()
 	srv.handleHealth()(w, r)
 	is.Equal(w.Code, http.StatusOK)
-	is.Equal(w.Header().Get("Content-Type"), "application/json")
+	is.Equal(w.Header().Get("Content-Type"), supportedContentType)
 	type response = struct {
 		Status string `json:"status"`
 	}

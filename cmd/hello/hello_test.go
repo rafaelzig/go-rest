@@ -22,7 +22,7 @@ func TestHelloIntegration(t *testing.T) {
 	resp, err := http.Get(srv.URL + "/health")
 	is.NoErr(err)
 	is.Equal(resp.StatusCode, http.StatusOK)
-	is.Equal(resp.Header.Get("Content-Type"), "application/json")
+	is.Equal(resp.Header.Get("Content-Type"), "application/json; charset=UTF-8")
 	type response = struct {
 		Status string `json:"status"`
 	}

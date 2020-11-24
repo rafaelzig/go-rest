@@ -15,7 +15,7 @@ func TestHandleIndexResponseCode(t *testing.T) {
 	w := httptest.NewRecorder()
 	srv.handleIndex()(w, r)
 	is.Equal(w.Code, http.StatusOK)
-	is.Equal(w.Header().Get("Content-Type"), "application/json")
+	is.Equal(w.Header().Get("Content-Type"), supportedContentType)
 	type response = struct {
 		Message string `json:"message"`
 	}
