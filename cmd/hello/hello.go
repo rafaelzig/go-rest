@@ -41,25 +41,14 @@ func createHandler() *hello.Server {
 	return h
 }
 
-func handleLogEvent() func(l hello.Level, v ...interface{}) {
-	type event struct {
-		Timestamp string      `json:"timestamp"`
-		Level     hello.Level `json:"level"`
-		Message   interface{} `json:"message"`
-	}
+func handleLogEvent() func(v interface{}) {
 	logger := log.New(os.Stdout, "", 0)
-	return func(l hello.Level, v ...interface{}) {
-		var m interface{}
-		if len(v) == 1 {
-			m = v[0]
-		} else {
-			m = v
+	return func(v interface{}) {
+		res, err := json.Marshal(v)
+		if err != nil {
+			logger.Printf("handleLogEvent failed: %s\n", err)
+			return
 		}
-		res, _ := json.Marshal(event{
-			Timestamp: time.Now().UTC().Format(time.RFC3339Nano),
-			Level:     l,
-			Message:   m,
-		})
 		logger.Println(string(res))
 	}
 }
