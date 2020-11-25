@@ -10,7 +10,7 @@ import (
 
 type Server struct {
 	Router         *mux.Router
-	LogHandlerFunc func(m interface{})
+	LogHandlerFunc func(v interface{})
 }
 
 const supportedContentType = "application/json; charset=UTF-8"
